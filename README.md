@@ -5,5 +5,5 @@ Python A* Shortest Path Algorithm Implementation
 https://youtu.be/KNXfSOx4eEE  
 This implementation is based on it
   
-- About python priority queue implentations,  
+- About python priority queue implementations,  
 see here: http://www.bogotobogo.com/python/python_PriorityQueue_heapq_Data_Structure.php
