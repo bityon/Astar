@@ -1,7 +1,7 @@
 from AstarClass import *
 
-OBSTACLES_NUM = 300
-X, Y = 30, 30
+OBSTACLES_NUM = 100
+X, Y = 25, 25
 
 if __name__ == '__main__':
 	# Create empty grid, empty grid is '0'
