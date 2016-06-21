@@ -133,7 +133,8 @@ class PathHandler():
 					# than the exists one, replace the nodes
 					indexNode, existsNode = self._get_node(self.open_list.queue, xd, yd)
 					if existsNode.priority > newNode.priority:
-						# I replace the nodes and not changing the exists node, because the priority queue
+						# I replace the nodes and not changing the exists node, 
+						# because the priority queue
 						#  will not be updated after this changing
 
 						# Remove existsNode (directly in the queue attribute which is a list object)
@@ -158,6 +159,7 @@ class PathHandler():
 			path.append(Point(self.currNode.x, self.currNode.y))
 			self.currNode = self.currNode.parent
 
+		path.reverse()
 		return path
 
 	def _is_valid_point(self, point):
@@ -168,7 +170,7 @@ class PathHandler():
 
 	def find_path(self):
 		"""Find the path from begin point to end point
-		:return list of Points from end to begin"""
+		:return list of Points from begin to end"""
 
 		# Set the start node
 		startNode = Node(self.beginx, self.beginy, self.endx, self.endy)
@@ -190,7 +192,7 @@ class PathHandler():
 				endPoint.parent = self.currNode
 				self.currNode = endPoint
 
-				# Return the full path from end to begin
+				# Return the full path from begin to end
 				return self._return_path()
 
 			# Search for points arround the current node
@@ -230,7 +232,7 @@ def random_free_loc(grid, X, Y):
 			return x, y
 
 def print_grid(grid):
-	print '\n'.join([''.join(['{:1}  '.format(item) for item in row])
+	print '\n'.join([''.join(['{:1}   '.format(item) for item in row]) 
       for row in grid])
 
 def draw_path(grid, path, end):
