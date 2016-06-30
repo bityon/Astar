@@ -1,6 +1,17 @@
 import Queue as Q
 import math
 import random
+import Image
+
+IMG_OUTPUT = "output.png"
+
+IMG_MAP = {
+	"0" : (255, 255, 255), #empty, white
+	"*" : (255, 0, 0), #path, red
+	"1" : (0, 0, 0), #obstacles, black
+	"B" : (0, 255, 0), #begin green
+	"E" : (0, 0, 255) #end blue
+}
 
 class Point:
 	def __init__(self, x, y):
@@ -65,6 +76,9 @@ class Node():
 		self.move_cost += 10 if (curr_dir % 2 == 0) else 14
 
 class PathHandler():
+	# All directions arround node with points deltas
+	DIR = [Point(1, 0), Point(1, 1), Point(0, 1), Point(-1, 1), Point(-1, 0), Point(-1, -1), Point(0, -1), Point(1, -1)]
+
 	def __init__(self, beginx, beginy, endx, endy, grid, X, Y):
 		self.beginx = beginx
 		self.beginy = beginy
@@ -106,9 +120,9 @@ class PathHandler():
 	def _search_around(self):
 		"""Search arround current node for new nodes in all directions,
 		or better nodes (according to priority) than we already found"""
-		for i in range(len(DIR)):
-			xd = self.currNode.x + DIR[i].x
-			yd = self.currNode.y + DIR[i].y
+		for i in range(len(self.DIR)):
+			xd = self.currNode.x + self.DIR[i].x
+			yd = self.currNode.y + self.DIR[i].y
 
 			# If this point is valid (in borders), and not occupied by something
 			# and it is not in close list
@@ -145,7 +159,7 @@ class PathHandler():
 
 	def _is_close_to_end(self):
 		"""Chech is current node is close one step to the end"""
-		for d in DIR:
+		for d in self.DIR:
 			if self.currNode.x + d.x == self.endx and \
 				self.currNode.y + d.y == self.endy:
 				return True
@@ -206,40 +220,55 @@ class PathHandler():
 		# return None
 		return None
 
-# All directions arround node with points deltas
-DIR = [Point(1, 0), Point(1, 1), Point(0, 1), Point(-1, 1), Point(-1, 0), Point(-1, -1), Point(0, -1), Point(1, -1)]
+class Grid:
+	def __init__(self, X, Y, obs_num):
+		self.X = X
+		self.Y = Y
+		self.obs_num = obs_num
+		self.grid = self._initiaize_grid()
+
+	def _initiaize_grid(self):
+		grid = [[0 for y in range(self.Y)] for x in range(self.X)]
+		return grid
+
+	def rand_x(self):
+		return random.randint(0, self.X - 1)
+
+	def rand_y(self):
+		return random.randint(0, self.Y - 1)
+
+	def random_free_loc(self):
+		while True:
+			x, y = self.rand_x(), self.rand_y()
+			if is_free(self.grid[x][y]):
+				return x, y
+
+	def print_grid(self):
+		print '\n'.join([''.join(['{:1}   '.format(item) for item in row]) \
+      		for row in self.grid])
+	
+	def random_obstacles(self):
+		for i in range(self.obs_num):
+			randx, randy = self.random_free_loc()
+			self.grid[randx][randy] = 1
+
+
+	def draw_path(self, path, end):
+		for p in path:
+			if p != end:
+				self.grid[p.x][p.y] = "*"
+
+	def save_grid_to_img(self):
+		im = Image.new('RGB', (self.Y, self.X) )
+		pixels = im.load()
+
+		for y in range(self.Y):
+			for x in range(self.X):
+				val = str(self.grid[x][y])
+				pixels[y, x] = IMG_MAP[val]
+
+		im.save(IMG_OUTPUT)
+
 
 def is_free(val):
-		return val == 0
-
-def random_obstacles(grid, obs_num, X, Y):
-	for i in range(obs_num):
-		randx, randy = random_free_loc(grid, X, Y)
-		grid[randx][randy] = 1
-
-	return grid
-
-def rand_x(X):
-	return random.randint(0, X - 1)
-
-def rand_y(Y):
-	return random.randint(0, Y - 1)
-
-def random_free_loc(grid, X, Y):
-	while True:
-		x, y = rand_x(X), rand_y(Y)
-		if is_free(grid[x][y]):
-			return x, y
-
-def print_grid(grid):
-	print '\n'.join([''.join(['{:1}   '.format(item) for item in row]) 
-      for row in grid])
-
-def draw_path(grid, path, end):
-	for p in path:
-		if p != end:
-			grid[p.x][p.y] = "*"
-
-	return grid
-
-
+	return val == 0

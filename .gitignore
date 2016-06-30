@@ -1,2 +1,4 @@
 .idea/*
 *.pyc
+Thumbs.db
+output.png

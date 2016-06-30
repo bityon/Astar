@@ -1,34 +1,38 @@
 from AstarClass import *
 
 OBSTACLES_NUM = 100
-X, Y = 25, 25
+X = 50 # Rows
+Y = 100 # Cols
 
 if __name__ == '__main__':
 	# Create empty grid, empty grid is '0'
-	grid = [[0 for x in range(X)] for y in range(Y)]
+	g = Grid(X, Y, OBSTACLES_NUM)
 
 	# Add obstacles to the grid, represent it in grid with '1'
-	grid = random_obstacles(grid, OBSTACLES_NUM, X, Y)
+	g.random_obstacles()
 	
 	# Random begin point, represent it in grid with 'B'
-	beginx, beginy = random_free_loc(grid, X, Y)
-	grid[beginx][beginy] = "B"
+	beginx, beginy = g.random_free_loc()
+	g.grid[beginx][beginy] = "B"
 
 	# Random end point, represent it in grid with 'E'
-	endx, endy = random_free_loc(grid, X, Y)
-	grid[endx][endy] = "E"
+	endx, endy = g.random_free_loc()
+	g.grid[endx][endy] = "E"
 
 	# Find the path from begin point to end point
-	p = PathHandler(beginx, beginy, endx, endy, grid, X, Y)
+	p = PathHandler(beginx, beginy, endx, endy, g.grid, X, Y)
 	path = p.find_path()
 
 	if path == None:
 		print "Didn't find the path. Sorry"
 	else:
 		# Draw all the points on the grid
-		grid = draw_path(grid, path, Point(endx, endy))
+		grid = g.draw_path(path, Point(endx, endy))
 
 	# Print the grid
-	print_grid(grid)
+	g.print_grid()
+
+	# Save grid to image
+	g.save_grid_to_img()
 
 
